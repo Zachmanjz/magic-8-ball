@@ -1,32 +1,60 @@
-$(document).ready(function (){
-     var magic8ball = {};
-      $("#answer").hide();
-     magic8ball.listOfAnswers = ["It is certain", "Reply hazy try again", "cannot predict now", "yes", "Outlook not so good"];
+var Magic8Ball = (function () {
 
-     magic8ball.askQuestion = function(question){
-                    $("#8ball").attr("src","https://s3.amazonaws.com/media.skillcrush.com/skillcrush/wp-content/uploads/2016/09/answerside.png");
-          $("#answer").fadeIn(4000);
-               var randomNumber = Math.random() * this.listOfAnswers.length;
+    const ANSWERS = [
+        "It is certain",
+        "Reply hazy try again",
+        "cannot predict now",
+        "yes",
+        "Outlook not so good"
+    ];
 
-               var randomAnswerIndex = Math.floor(randomNumber);
+    const BALL_IMG = "https://s3.amazonaws.com/media.skillcrush.com/skillcrush/wp-content/uploads/2016/09/8side.png"
+    const BALL_ANSWER_IMG = "https://s3.amazonaws.com/media.skillcrush.com/skillcrush/wp-content/uploads/2016/09/answerside.png"
 
-          var randomAnswer = this.listOfAnswers[randomAnswerIndex];
-          $("#answer").text(randomAnswer);
+    const $8BALL = $("#8ball");
+    const $ANSWER = $("#answer");
+    const $QUESTION_BTN = $("#questionButton");
 
-          console.log("Question: " + question + "… " + "Answer: " + randomAnswer);
-     };
+    const FADE_TIME = 4000;
 
-     var onClick = function(){
-           $("#answer").hide();
-          $("#8ball").attr("src","https://s3.amazonaws.com/media.skillcrush.com/skillcrush/wp-content/uploads/2016/09/8side.png");
+    function resetBall() {
+        $ANSWER.hide();
+        $8BALL.attr("src", BALL_IMG);
+    }
 
-          setTimeout(function(){
-               var question = prompt("ASK A YES/NO QUESTION!");
-          $("#8ball").effect("shake");
-          magic8ball.askQuestion(question);
-          },500);
+    function shakeBall() {
+        $8BALL.effect("shake");
+    }
 
-     };
+    function fadeInAnswer(answer) {
+        $8BALL.attr("src", BALL_ANSWER_IMG);
+        $ANSWER.text(answer).fadeIn(FADE_TIME);
+    }
 
-     $("#questionButton").click(onClick);
-});
+    function getRandomAnswer() {
+        return ANSWERS[Math.floor(Math.random() * ANSWERS.length)];
+    }
+
+    function showAnswer(answer) {
+        fadeInAnswer(getRandomAnswer());
+    }
+
+    function askQuestion() {
+        resetBall();
+        prompt("ASK A YES/NO QUESTION!");
+        shakeBall();
+        showAnswer();
+    }
+
+    function init() {
+        resetBall();
+        $QUESTION_BTN.on('click', askQuestion);
+    }
+
+    return {
+        init: init
+    }
+
+})();
+
+Magic8Ball.init();
